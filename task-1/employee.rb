@@ -1,24 +1,20 @@
 require_relative 'person.rb'
+require_relative 'service.rb'
 require 'debug'
 
 
 class Employee < Person
 
   attr_accessor :salary, :company, :document
-  @@employee_id = 0
-  @employees = []
+  @@employee_id = 1
+
 
   def initialize(salary:, company:, document:, **options)
     super(**options)
     @@employee_id += 1
-    @id = @@employee_id
     @salary = salary
     @company = company
     @document = document
-  end
-
-  def self.select_by_company(company_name)
-    @employees.select { |employee| employee.company == company_name }
   end
 
   while true
@@ -39,7 +35,7 @@ class Employee < Person
       #create employee
       p "insert the name of the employee:"
       name = gets.chomp
-      id = @id
+      id = @@employee_id
       p "insert the age of the employee:"
       age = gets.chomp.to_i
       p "insert the salary of the employee:"
@@ -49,37 +45,41 @@ class Employee < Person
       p "insert the document number of the employee:"
       document = gets.chomp.to_i
 
-      employee = Employee.new(name: name, age: age, id: id,  salary: salary, company: company, document: document)
-      if @employees.any? { |e| e.document == document }
+      if Service.document(document)
+        @@employee_id += 0
         p "The document already exists"
       else
-        @employees.push(employee)
+        employee = Employee.new(name: name, age: age, id: id,  salary: salary, company: company, document: document)
+        Service.employees.push(employee)
         p "the Employee is created successfully"
       end
     when 2
       #show all employees
-      @employees.each do |employee|
-        p " Name of the employee: #{employee.name}"
-      end
+      employees = Service.show
+      employees.each { |employee| p "Name of the employee: #{employee.name}" }
     when 3
       #id
-      @employees.each do |employee|
-        p "ID of the employee: #{employee.id}"
-      end
+      employee_by_id = Service.show
+      employee_by_id.each { |employee| p "ID of the employee: #{employee.id}" }
     when 4
       #company
-      print "Enter the company name:"
+      p "Enter the company name:"
       company_name = gets.chomp
-      employees = Employee.select_by_company(company_name)
+      employees = Service.select_by_company(company_name)
       p "Employees from #{company_name}:"
       employees.each { |e| p e.name }
     when 5
       #delete
-      @employees.delete_if { |e| e == @employees.last }
-      p "The last employee has been deleted"
+      p "Insert ID of the employee for delete:"
+      employee_id = gets.chomp.to_i
+      Service.delete_by_id(employee_id)
+      if employee_id == id
+        p "the employee with ID #{employee_id} was deleted"
+        elsif
+          p "the id not exist"
+      end
     when 6
-      employee = Person.new(age: age, name: name, id: id)
-      p employee.birth_date
+      p Person.birth_date(age)
     when 7
       p "Exiting..."
       exit

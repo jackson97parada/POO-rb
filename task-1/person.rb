@@ -7,9 +7,10 @@ class Person
     @age = age
   end
 
-  def birth_date
+  def self.birth_date(age)
+    @age = age
     current_year = Time.now.year
     birth_year = current_year - @age
-    "Hey #{@name}, Your birth date is #{birth_year}"
+    "Your birth date is #{birth_year}"
   end
 end
